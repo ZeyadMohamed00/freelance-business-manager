@@ -77,6 +77,8 @@ def init():
 
 
 def ensure_seed(db, owner):
+    if owner.startswith("user:"):
+        return  # real accounts start empty; only anonymous guests get demo data
     # The UI fires several GETs at once on first load; serialise per owner so the demo data is seeded exactly once.
     db.execute(text("SELECT pg_advisory_xact_lock(hashtext(:o))"), {"o": owner})
     if db.query(Client).filter_by(owner=owner).first():

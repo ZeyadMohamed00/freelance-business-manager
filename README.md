@@ -30,7 +30,6 @@ React + TypeScript (Vite) with Chart.js, FastAPI, PostgreSQL (SQLAlchemy), fpdf2
 - Verified: 9 API tests on a real Postgres, 2 frontend tests, production build, and a real-browser click-through of the live site (seed data, create invoice from hours, mark paid, charts update).
 - **AI proposal feature:** the LLM call is written (set `OPENAI_API_KEY`, optional `LLM_MODEL`) but **was never run**, there was no key. Without a key the app uses a deterministic template and the UI labels the result "template (no LLM key configured)".
 - Docker files are written but were not built here (no Docker in the build sandbox).
-- No login: demo users are separated by a random browser id (`X-Client-Id`). This is demo isolation, not real authentication. Add auth before real use.
 - CI workflow is in `ci/` (the push token lacked `workflow` scope); move it to `.github/workflows/`.
 
 ## Run
@@ -56,3 +55,10 @@ pytest -q && cd frontend && npm test
 3. Why income is derived from paid invoices.
 4. The demo-user header is isolation, not security.
 5. The proposal feature has two modes and only the template mode has been run.
+
+## Accounts and persistence
+- **Real accounts:** `POST /auth/register`, `POST /auth/login`, `GET /auth/me`. Passwords are salted PBKDF2-SHA256 hashes; sessions are signed JWTs (7 days) sent as `Authorization: Bearer`. Set `JWT_SECRET` in production; if it is unset, a secret is derived from `DATABASE_URL`.
+- **Persistence:** a signed-in user's data is stored in PostgreSQL under their own account key (`user:<id>`) and is only reachable with their token. New accounts start empty.
+- **Guest demo:** without logging in, "Continue as guest" uses an anonymous browser id with clearly labeled sample data. Guest ids can never collide with or impersonate an account.
+- Tests: `tests/test_auth.py` (register, login, wrong or weak password, duplicate email, bad token, isolation) and `frontend/src/auth.test.tsx`.
+- Not built: email verification, password reset, rate limiting and refresh tokens (listed as next steps).

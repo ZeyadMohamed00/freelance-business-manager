@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from . import db as D
+from .auth import identity
+from .auth import router as auth_router
 from .pdf import render, total
 from .proposal import draft
 
@@ -15,10 +17,8 @@ def get_db():
         yield s
 
 
-def owner(x_client_id: str = Header(default="")):
-    if not (8 <= len(x_client_id) <= 64) or not x_client_id.replace("-", "").isalnum():
-        raise HTTPException(400, "Missing or invalid X-Client-Id header")
-    return x_client_id
+def owner(authorization: str = Header(default=""), x_client_id: str = Header(default="")):
+    return identity(authorization, x_client_id)
 
 
 class ClientIn(BaseModel):
@@ -69,6 +69,7 @@ class ProposalIn(BaseModel):
 def create_app():
     D.init()
     app = FastAPI(title="Freelance Business Manager", version="1.0.0")
+    app.include_router(auth_router)
     app.add_middleware(
         CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
     )
