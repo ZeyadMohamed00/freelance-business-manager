@@ -68,3 +68,7 @@ pytest -q && cd frontend && npm test
 ## Database migrations
 
 Schema changes are versioned with Alembic (`migrations/`, baseline `0001`). Point `DATABASE_URL` at the database and run `alembic upgrade head`. The baseline was generated from the models and checked by running upgrade, downgrade and upgrade again on SQLite; I did not run it against a fresh PostgreSQL instance here. The running app still creates missing tables on start.
+
+## End-to-end test
+
+`cd frontend && npx playwright install chromium && npm run e2e` starts the API on a throwaway SQLite database, serves the production build of the SPA and drives it in a browser: register, add a client, log out, log in, and check the client is still there. It runs in CI.
