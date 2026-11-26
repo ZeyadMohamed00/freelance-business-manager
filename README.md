@@ -6,6 +6,9 @@ Track clients, projects, hours, quotes, invoices (with PDF), income and expenses
 Open it and you get synthetic demo data (clearly labeled), private to your browser. "Reset demo data" wipes it. Nothing is ever emailed; "Mark sent" only changes a status.
 
 ![Dashboard](docs/dashboard.png)
+![Invoice detail](docs/invoice.png)
+
+Pages: Dashboard (Chart.js), Clients and projects, Quotes and invoices (multi-line quote builder, PDF), Income and expenses (CSV export), Proposal drafter (can create a quote from the draft).
 
 ## Stack
 React + TypeScript (Vite) with Chart.js, FastAPI, PostgreSQL (SQLAlchemy), fpdf2 for PDFs, optional LLM API for proposals. Docker + docker-compose. Tests: pytest (real embedded Postgres) and vitest.
