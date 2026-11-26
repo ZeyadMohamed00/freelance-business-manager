@@ -1,5 +1,7 @@
 # Freelance Business Manager
 
+[![CI](https://github.com/ZeyadMohamed00/freelance-business-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/ZeyadMohamed00/freelance-business-manager/actions/workflows/ci.yml)
+
 Track clients, projects, hours, quotes, invoices (with PDF), income and expenses, see reports, and draft project proposals.
 
 **Live demo:** https://freelance-web-taupe.vercel.app (API: https://freelance-api-liart.vercel.app/docs)
