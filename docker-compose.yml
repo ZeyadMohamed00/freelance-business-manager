@@ -1,0 +1,9 @@
+services:
+  db:
+    image: postgres:16
+    environment: {POSTGRES_PASSWORD: pw, POSTGRES_DB: fb}
+  api:
+    build: .
+    environment: {DATABASE_URL: "postgresql+psycopg2://postgres:pw@db/fb"}
+    ports: ["8000:8000"]
+    depends_on: [db]
