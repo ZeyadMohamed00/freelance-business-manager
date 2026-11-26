@@ -10,6 +10,19 @@ Open it and you get synthetic demo data (clearly labeled), private to your brows
 
 Pages: Dashboard (Chart.js), Clients and projects, Quotes and invoices (multi-line quote builder, PDF), Income and expenses (CSV export), Proposal drafter (can create a quote from the draft).
 
+## System overview
+```mermaid
+flowchart LR
+  C[Client] --> P[Project] --> TE[Time entries]
+  TE -->|create invoice from hours: billed once| INV[Invoice + PDF]
+  QT[Quote] -->|accept| INV
+  INV -->|mark paid| INC[Income transaction]
+  EXP[Expenses] --> REP[Reports and charts]
+  INC --> REP
+```
+
+**Tech stack:** React, TypeScript, Vite, Chart.js, FastAPI, PostgreSQL, fpdf2, Pytest, Vitest, Docker.
+
 ## Stack
 React + TypeScript (Vite) with Chart.js, FastAPI, PostgreSQL (SQLAlchemy), fpdf2 for PDFs, optional LLM API for proposals. Docker + docker-compose. Tests: pytest (real embedded Postgres) and vitest.
 
