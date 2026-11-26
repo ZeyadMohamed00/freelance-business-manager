@@ -21,11 +21,11 @@ test("shows KPIs, lets user bill hours and mark an invoice paid", async () => {
   render(<App />);
   expect(await screen.findByText("160.50")).toBeInTheDocument();
   expect(screen.getByText(/DEMO: synthetic data/)).toBeInTheDocument();
-  await userEvent.click(screen.getByText("projects"));
-  await userEvent.click(screen.getByText("Create invoice from hours"));
+  await userEvent.click(screen.getByText("Clients & projects"));
+  await userEvent.click(await screen.findByText("Create invoice from hours"));
   await waitFor(() => expect(calls).toContain("POST /projects/1/invoice"));
-  await userEvent.click(screen.getByText("documents"));
-  await userEvent.click(screen.getByText("Mark paid"));
+  await userEvent.click(screen.getByText("Quotes & invoices"));
+  await userEvent.click(await screen.findByText("Mark paid"));
   await waitFor(() => expect(calls).toContain("POST /invoices/1/pay"));
 });
 
