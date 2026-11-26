@@ -30,7 +30,7 @@ React + TypeScript (Vite) with Chart.js, FastAPI, PostgreSQL (SQLAlchemy), fpdf2
 - Verified: 9 API tests on a real Postgres, 2 frontend tests, production build, and a real-browser click-through of the live site (seed data, create invoice from hours, mark paid, charts update).
 - **AI proposal feature:** the LLM call is written (set `OPENAI_API_KEY`, optional `LLM_MODEL`) but **was never run**, there was no key. Without a key the app uses a deterministic template and the UI labels the result "template (no LLM key configured)".
 - Docker files are written but were not built here (no Docker in the build sandbox).
-- CI workflow is in `ci/` (the push token lacked `workflow` scope); move it to `.github/workflows/`.
+- CI workflow is in `.github/workflows/` (the push token lacked `workflow` scope); move it to `.github/workflows/`.
 
 ## Run
 ```
