@@ -1,8 +1,10 @@
 from fpdf import FPDF
 
+from .money import as_float, line_total, money_sum
+
 
 def total(items):
-    return round(sum(float(i["qty"]) * float(i["unit_price"]) for i in items), 2)
+    return as_float(money_sum(line_total(i["qty"], i["unit_price"]) for i in items))
 
 
 def render(doc, client_name: str) -> bytes:
@@ -27,7 +29,7 @@ def render(doc, client_name: str) -> bytes:
     pdf.ln()
     pdf.set_font("Helvetica", "", 11)
     for i in doc.items:
-        amt = float(i["qty"]) * float(i["unit_price"])
+        amt = as_float(line_total(i["qty"], i["unit_price"]))
         pdf.cell(95, 8, str(i["description"])[:45], border=1)
         pdf.cell(25, 8, f"{float(i['qty']):g}", border=1)
         pdf.cell(35, 8, f"{float(i['unit_price']):.2f}", border=1)

@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from . import db as D
 from .auth import identity
 from .auth import router as auth_router
+from .money import ZERO, as_float, cents, dec, line_total, money_sum
 from .pdf import render, total
 from .proposal import draft
 
@@ -137,7 +138,7 @@ def create_app():
                     "hourly_rate": p.hourly_rate,
                     "hours": sum(t.hours for t in ts),
                     "unbilled_hours": un,
-                    "unbilled_amount": round(un * p.hourly_rate, 2),
+                    "unbilled_amount": as_float(line_total(un, p.hourly_rate)),
                 }
             )
         return out
@@ -320,35 +321,35 @@ def create_app():
     @app.get("/report")
     def report(o: str = Depends(owner), db=Depends(get_db)):
         D.ensure_seed(db, o)
-        monthly = defaultdict(lambda: {"income": 0.0, "expense": 0.0})
-        cats = defaultdict(float)
+        monthly = defaultdict(lambda: {"income": ZERO, "expense": ZERO})
+        cats = defaultdict(lambda: ZERO)
         for t in db.query(D.Txn).filter_by(owner=o):
-            monthly[t.day.strftime("%Y-%m")][t.kind] += t.amount
+            monthly[t.day.strftime("%Y-%m")][t.kind] += cents(t.amount)
             if t.kind == "expense":
-                cats[t.category or "other"] += t.amount
-        inc = sum(m["income"] for m in monthly.values())
-        exp = sum(m["expense"] for m in monthly.values())
+                cats[t.category or "other"] += cents(t.amount)
+        inc = money_sum(m["income"] for m in monthly.values())
+        exp = money_sum(m["expense"] for m in monthly.values())
         docs = db.query(D.Document).filter_by(owner=o, kind="invoice").all()
-        outstanding = sum(total(d.items) for d in docs if d.status in ("draft", "sent"))
-        overdue = sum(
+        outstanding = money_sum(total(d.items) for d in docs if d.status in ("draft", "sent"))
+        overdue = money_sum(
             total(d.items) for d in docs if d.status in ("sent",) and d.due and d.due < date.today()
         )
-        hours = defaultdict(float)
+        hours = defaultdict(lambda: ZERO)
         pn = {p.id: p.name for p in db.query(D.Project).filter_by(owner=o)}
         for t in db.query(D.TimeEntry).filter_by(owner=o):
-            hours[pn.get(t.project_id, "?")] += t.hours
+            hours[pn.get(t.project_id, "?")] += dec(t.hours)
         return {
-            "income": round(inc, 2),
-            "expenses": round(exp, 2),
-            "net": round(inc - exp, 2),
-            "outstanding": round(outstanding, 2),
-            "overdue": round(overdue, 2),
+            "income": as_float(inc),
+            "expenses": as_float(exp),
+            "net": as_float(inc - exp),
+            "outstanding": as_float(outstanding),
+            "overdue": as_float(overdue),
             "monthly": [
-                {"month": k, **{a: round(b, 2) for a, b in v.items()}}
+                {"month": k, **{a: as_float(b) for a, b in v.items()}}
                 for k, v in sorted(monthly.items())
             ],
-            "expenses_by_category": {k: round(v, 2) for k, v in cats.items()},
-            "hours_by_project": {k: round(v, 2) for k, v in hours.items()},
+            "expenses_by_category": {k: as_float(v) for k, v in cats.items()},
+            "hours_by_project": {k: as_float(v) for k, v in hours.items()},
         }
 
     @app.post("/proposals")
