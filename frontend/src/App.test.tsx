@@ -20,7 +20,7 @@ test("shows KPIs, lets user bill hours and mark an invoice paid", async () => {
   }));
   render(<App />);
   expect(await screen.findByText("160.50")).toBeInTheDocument();
-  expect(screen.getByText(/DEMO: synthetic data/)).toBeInTheDocument();
+  expect(screen.getByText(/Synthetic sample data/)).toBeInTheDocument();
   await userEvent.click(screen.getByText("Clients & projects"));
   await userEvent.click(await screen.findByText("Create invoice from hours"));
   await waitFor(() => expect(calls).toContain("POST /projects/1/invoice"));

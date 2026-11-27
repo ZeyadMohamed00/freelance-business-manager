@@ -48,8 +48,8 @@ function Main() {
   return (
     <Shell brand="Freelance HQ" tagline="Business manager" page={page} onNav={(p) => setPage(p as Page)}
       nav={[{ id: "dashboard", label: "Dashboard", icon: "◎" }, { id: "clients", label: "Clients & projects", icon: "☺", badge: projects.length || undefined }, { id: "invoices", label: "Quotes & invoices", icon: "☰", badge: open || undefined }, { id: "money", label: "Income & expenses", icon: "$" }, { id: "proposal", label: "Proposal drafter", icon: "✎" }]}
-      actions={<button className="btn" onClick={() => act(() => api.reset(), "Demo data reset")}>Reset demo data</button>}
-      footer={<div className="muted small">DEMO: synthetic data, private to this browser. Nothing is emailed.</div>}>
+      actions={<button className="btn" onClick={() => act(() => api.reset(), "Data reset")}>Reset data</button>}
+      footer={<div className="muted small">Synthetic sample data, private to this browser. Nothing is emailed.</div>}>
       {err && <div className="card" role="alert" style={{ borderColor: "#ef4444", marginBottom: 12 }}>{err}</div>}
       {page === "dashboard" && <Dashboard {...d} />}
       {page === "clients" && <Clients {...d} />}
@@ -183,7 +183,7 @@ function Money({ txns, act, loading }: D) {
 
 function Proposal({ clients, act, go }: D) {
   const toast = useToast();
-  const [pr, setPr] = useState({ client: "Nile Coffee (demo)", project: "Ordering app", scope: "Menu browsing; Cart and checkout; Order history", budget: "1800" });
+  const [pr, setPr] = useState({ client: "Nile Coffee", project: "Ordering app", scope: "Menu browsing; Cart and checkout; Order history", budget: "1800" });
   const [out, setOut] = useState<{ mode: string; text: string } | null>(null); const [busy, setBusy] = useState(false);
   const gen = async () => { setBusy(true); try { setOut(await api.proposal({ client: pr.client, project: pr.project, scope: pr.scope, budget: pr.budget ? Number(pr.budget) : undefined })); } catch (e) { toast((e as Error).message, "bad"); } finally { setBusy(false); } };
   const toQuote = () => act(async () => { await api.addQuote({ client_id: clients[0]?.id, items: [{ description: `${pr.project} (${pr.scope.split(";").length} deliverables)`, qty: 1, unit_price: Number(pr.budget || 0) }] }); go("invoices"); }, "Quote created from proposal");
