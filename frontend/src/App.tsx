@@ -20,8 +20,8 @@ function Charts({ r }: { r: Report }) {
     if (!bar.current || !pie.current) return;
     let a: Chart | undefined, b: Chart | undefined;
     try {
-      a = new Chart(bar.current, { type: "bar", data: { labels: r.monthly.map((m) => m.month), datasets: [{ label: "Income", data: r.monthly.map((m) => m.income), backgroundColor: "#22c55e", borderRadius: 6 }, { label: "Expenses", data: r.monthly.map((m) => m.expense), backgroundColor: "#f87171", borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false } });
-      b = new Chart(pie.current, { type: "doughnut", data: { labels: Object.keys(r.expenses_by_category), datasets: [{ data: Object.values(r.expenses_by_category), backgroundColor: ["#6366f1", "#f59e0b", "#8b5cf6", "#14b8a6", "#ef4444", "#0ea5e9"] }] }, options: { responsive: true, maintainAspectRatio: false, cutout: "62%" } });
+      a = new Chart(bar.current, { type: "bar", data: { labels: r.monthly.map((m) => m.month), datasets: [{ label: "Income", data: r.monthly.map((m) => m.income), backgroundColor: "#5b7f4a", borderRadius: 6 }, { label: "Expenses", data: r.monthly.map((m) => m.expense), backgroundColor: "#c97b5a", borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false } });
+      b = new Chart(pie.current, { type: "doughnut", data: { labels: Object.keys(r.expenses_by_category), datasets: [{ data: Object.values(r.expenses_by_category), backgroundColor: ["#8a6d2f", "#c9a44c", "#6b7f86", "#4f8f87", "#b3392c", "#5a7ea0"] }] }, options: { responsive: true, maintainAspectRatio: false, cutout: "62%" } });
     } catch { /* canvas unavailable in tests */ }
     return () => { a?.destroy(); b?.destroy(); };
   }, [r]);
